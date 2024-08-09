@@ -586,17 +586,18 @@ class Transaction:
             # iterate to read the witnesses for every input
             for n in range(0, len(inputs)):
                 n_items, size = vi_to_int(rawtx[cursor : cursor + 9])
-                cursor += size
-                witnesses_tmp: list[str] = []
-                for m in range(0, n_items):
-                    witness = b"\0"
-                    item_size, size = vi_to_int(rawtx[cursor : cursor + 9])
-                    if item_size:
-                        witness = rawtx[cursor + size : cursor + item_size + size]
-                    cursor += item_size + size
-                    witnesses_tmp.append(witness.hex())
-                if witnesses_tmp:
-                    witnesses.append(TxWitnessInput(stack=witnesses_tmp))
+                if n_items > 0:
+                    cursor += size
+                    witnesses_tmp: list[str] = []
+                    for m in range(0, n_items):
+                        witness = b"\0"
+                        item_size, size = vi_to_int(rawtx[cursor : cursor + 9])
+                        if item_size:
+                            witness = rawtx[cursor + size : cursor + item_size + size]
+                        cursor += item_size + size
+                        witnesses_tmp.append(witness.hex())
+                    if witnesses_tmp:
+                        witnesses.append(TxWitnessInput(stack=witnesses_tmp))
 
         locktime = rawtx[cursor : cursor + 4]
 
